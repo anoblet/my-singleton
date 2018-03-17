@@ -54,6 +54,7 @@
                     super.connectedCallback();
                     instance.subscribers[this.property] = instance.subscribers[this.property] || [];
                     instance.subscribers[this.property].push(this);
+                    this.value = this.data[this.property];
                 }
 
                 disconnectedCallback() {
