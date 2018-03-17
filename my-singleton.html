@@ -52,9 +52,9 @@
 
                 connectedCallback() {
                     super.connectedCallback();
+                    this.value = this.data[this.property];
                     instance.subscribers[this.property] = instance.subscribers[this.property] || [];
                     instance.subscribers[this.property].push(this);
-                    this.value = this.data[this.property];
                 }
 
                 disconnectedCallback() {
@@ -64,7 +64,9 @@
                 }
 
                 _valueChanged(change) {
-                    this.data[this.property] = this.value;
+                    // console.log(change);
+                    // this.data[this.property] = this.value;
+                    console.log(instance.subscribers);
                     if (instance.subscribers[this.property]) {
                         instance.subscribers[this.property].forEach(e => {
                             e.notifyPath(change.path);
