@@ -10,24 +10,35 @@
          * @polymer
          * @demo demo/index.html
          */
-        class MySingleton extends Polymer.Element {
-            static get is() {
-                return 'my-singleton';
+        (function () {
+            class MySingleton extends Polymer.Element {
+                static get is() {
+                    return 'my-singleton';
+                }
+
+                static get properties() {
+                    return {
+                        property: {
+                            type: String
+                        },
+                        value: {
+                            notify: true
+                        }
+                    };
+                }
+
+                static get observers() {
+                    return [
+                        '_valueChanged(value.*)'
+                    ]
+                }
+
+                _valueChanged(change) {
+                    
+                }
             }
 
-            static get properties() {
-                return {
-                    property: {
-                        type: String
-                    },
-                    value: {
-                        notify: true
-                    }
-                };
-            }
-
-        }
-
-        window.customElements.define(MySingleton.is, MySingleton);
+            window.customElements.define(MySingleton.is, MySingleton);
+        })();
     </script>
 </dom-module>
