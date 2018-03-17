@@ -11,6 +11,10 @@
          * @demo demo/index.html
          */
         (function () {
+            let data = {};
+            let instance;
+            let subscribers = {};
+
             class MySingleton extends Polymer.Element {
                 static get is() {
                     return 'my-singleton';
@@ -18,8 +22,15 @@
 
                 static get properties() {
                     return {
+                        data: {
+                            value: data
+                        },
                         property: {
                             type: String
+                        },
+                        subscribers: {
+                            type: Array,
+                            value: subscribers
                         },
                         value: {
                             notify: true
@@ -33,8 +44,31 @@
                     ]
                 }
 
+                constructor() {
+                    super();
+                    // Set authoritative instance
+                    if(!instance) instance = this;
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    instance.subscribers[this.property] = instance.subscribers[this.property] || [];
+                    instance.subscribers[this.property].push(this);
+                }
+
+                disconnectedCallback() {
+                    super.disconnectedCallback();
+                    var index = instance.subscribers[this.property].indexOf(this);
+                    if (index > -1) instance.subscribers[this.property].splice(index, 1)
+                }
+
                 _valueChanged(change) {
-                    
+                    this.data[this.property] = this.value;
+                    if (instance.subscribers[this.property]) {
+                        instance.subscribers[this.property].forEach(e => {
+                            e.notifyPath(change.path);
+                        });
+                    }
                 }
             }
 
