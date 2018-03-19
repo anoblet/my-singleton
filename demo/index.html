@@ -10,6 +10,7 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../my-singleton.html">
 
     <custom-style>
@@ -22,7 +23,10 @@
       <h3>Basic my-singleton demo</h3>
       <demo-snippet>
         <template>
-          <my-singleton></my-singleton>
+          <my-singleton key="test" value="{{instance1}}"></my-singleton>
+          <my-singleton key="test" value="{{instance2}}"></my-sin   gleton>
+          Instance 1<paper-input value="{{instance1}}"></paper-input>
+          Instance 2<paper-input value="{{instance2}}"></paper-input>
         </template>
       </demo-snippet>
     </div>

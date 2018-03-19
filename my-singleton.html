@@ -5,6 +5,7 @@
         /**
          * `my-singleton`
          *
+         * Currently limited to objects
          *
          * @customElement
          * @polymer
@@ -14,17 +15,15 @@
             let data = {};
             let instance;
             let subscribers = {};
+            let isRoot = false;
 
-            class MySingleton extends Polymer.Element {
+            class MySingleton extends Polymer.MutableData(Polymer.Element) {
                 static get is() {
                     return 'my-singleton';
                 }
 
                 static get properties() {
                     return {
-                        data: {
-                            value: data
-                        },
                         property: {
                             type: String
                         },
@@ -33,6 +32,7 @@
                             value: subscribers
                         },
                         value: {
+                            type: Object,
                             notify: true
                         }
                     };
@@ -52,7 +52,13 @@
 
                 connectedCallback() {
                     super.connectedCallback();
-                    this.value = this.data[this.property];
+                    console.log("Check 1");
+                    if(this.value) {
+                        data[this.property] = this.value;
+                    }
+                    // Default to an object
+                    // data[this.property] = data[this.property] || {};
+                    this.value = data[this.property];
                     instance.subscribers[this.property] = instance.subscribers[this.property] || [];
                     instance.subscribers[this.property].push(this);
                 }
@@ -60,17 +66,24 @@
                 disconnectedCallback() {
                     super.disconnectedCallback();
                     var index = instance.subscribers[this.property].indexOf(this);
-                    if (index > -1) instance.subscribers[this.property].splice(index, 1)
+                    if(index > -1) instance.subscribers[this.property].splice(index, 1)
                 }
 
                 _valueChanged(change) {
-                    // console.log(change);
-                    // this.data[this.property] = this.value;
-                    console.log(instance.subscribers);
-                    if (instance.subscribers[this.property]) {
-                        instance.subscribers[this.property].forEach(e => {
-                            e.notifyPath(change.path);
-                        });
+                    console.log("Check 2");
+                    // Is this necessary?
+                    data[this.property] = change.base;
+                    if(!isRoot) {
+                        isRoot = true;
+                        console.log(instance.subscribers[this.property]);
+                        if(instance.subscribers[this.property]) {
+                            instance.subscribers[this.property].forEach(e => {
+                                console.log(e.value);
+                                // e.set("value", instance.value);
+                                e.notifyPath(change.path);
+                            });
+                        }
+                        isRoot = false;
                     }
                 }
             }
