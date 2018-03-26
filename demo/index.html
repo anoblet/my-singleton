@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
@@ -14,21 +14,75 @@
     <link rel="import" href="../my-singleton.html">
 
     <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
     </custom-style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic my-singleton demo</h3>
-      <demo-snippet>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic my-singleton demo</h3>
+    <demo-snippet>
         <template>
-          <my-singleton key="test" value="{{instance1}}"></my-singleton>
-          <my-singleton key="test" value="{{instance2}}"></my-sin   gleton>
-          Instance 1<paper-input value="{{instance1}}"></paper-input>
-          Instance 2<paper-input value="{{instance2}}"></paper-input>
+            <my-singleton key="test" value="{{instance1}}"></my-singleton>
+            <my-singleton key="test" value="{{instance2}}"></my-sin   gleton>
+                Instance 1
+                <paper-input value="{{instance1}}"></paper-input>
+                Instance 2
+                <paper-input value="{{instance2}}"></paper-input>
         </template>
-      </demo-snippet>
-    </div>
-  </body>
+    </demo-snippet>
+</div>
+<dom-module id="test-component">
+    <template>
+        <div>
+            String
+            <paper-input value="{{string}}"></paper-input>
+            <paper-input value="{{stringTest}}"></paper-input>
+            <my-singleton property="property3" value="{{string}}"></my-singleton>
+            <my-singleton property="property3" value="{{stringTest}}"></my-singleton>
+        </div>
+        <div>
+            Object
+            <paper-input value="{{object.value}}"></paper-input>
+            <paper-input value="{{objectTest.value}}"></paper-input>
+            <my-singleton id="object" property="property4" value="{{object}}"></my-singleton>
+            <my-singleton id="objectTest" property="property4" value="{{objectTest}}"></my-singleton>
+            <!--<app-localstorage-document key="object" data="{{object}}"></app-localstorage-document>-->
+        </div>z
+    </template>
+    <script>
+        class TestComponent extends Polymer.Element {
+            static get is() {
+                return 'test-component';
+            }
+
+            static get properties() {
+                return {
+                    string: {
+                        value: "String"
+                    },
+                    object: {
+                        value: {
+                            value: "value1"
+                        }
+                    },
+                    objectTest: {
+                        value: {
+                            value: "value2"
+                        }
+                    },
+                    array: {
+                        value: [
+                            "test",
+                            "test2"
+                        ]
+                    }
+                }
+            }
+        }
+
+        window.customElements.define(TestComponent.is, TestComponent);
+    </script>
+</dom-module>
+</body>
 </html>
