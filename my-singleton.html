@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="my-singleton">
     <script>
@@ -13,11 +13,10 @@
          */
         (function () {
             let data = {};
-            let instance;
             let subscribers = {};
-            let isRoot = false;
+            let isRoot = true;
 
-            class MySingleton extends Polymer.MutableData(Polymer.Element) {
+            class MySingleton extends Polymer.Element {
                 static get is() {
                     return 'my-singleton';
                 }
@@ -26,10 +25,6 @@
                     return {
                         property: {
                             type: String
-                        },
-                        subscribers: {
-                            type: Array,
-                            value: subscribers
                         },
                         value: {
                             type: Object,
@@ -44,47 +39,50 @@
                     ]
                 }
 
-                constructor() {
-                    super();
-                    // Set authoritative instance
-                    if(!instance) instance = this;
-                }
-
                 connectedCallback() {
                     super.connectedCallback();
-                    console.log("Check 1");
-                    if(this.value) {
-                        data[this.property] = this.value;
+                    // If the store has been set, then sync.
+                    if(data[this.property]) {
+                        this.value = data[this.property];
+                    } else {
+                        // If the instance provides an initial value, set the store.
+                        if(this.value) {
+                            data[this.property] = this.value;
+                        }
                     }
-                    // Default to an object
-                    // data[this.property] = data[this.property] || {};
-                    this.value = data[this.property];
-                    instance.subscribers[this.property] = instance.subscribers[this.property] || [];
-                    instance.subscribers[this.property].push(this);
+                    // Add the instance to the subscriber list
+                    subscribers[this.property] = subscribers[this.property] || [];
+                    subscribers[this.property].push(this);
+                    // Clear the initial element resolution flag
+                    this.connected = true;
                 }
 
                 disconnectedCallback() {
                     super.disconnectedCallback();
-                    var index = instance.subscribers[this.property].indexOf(this);
-                    if(index > -1) instance.subscribers[this.property].splice(index, 1)
+                    var index = subscribers[this.property].indexOf(this);
+                    if(index > -1) subscribers[this.property].splice(index, 1)
                 }
 
                 _valueChanged(change) {
-                    console.log("Check 2");
-                    // Is this necessary?
-                    data[this.property] = change.base;
-                    if(!isRoot) {
-                        isRoot = true;
-                        console.log(instance.subscribers[this.property]);
-                        if(instance.subscribers[this.property]) {
-                            instance.subscribers[this.property].forEach(e => {
-                                console.log(e.value);
-                                // e.set("value", instance.value);
-                                e.notifyPath(change.path);
-                            });
+                    // Don't propagate on first run
+                    if(!this.connected) return;
+                    // Don't update unnecessarily
+                    if(!isRoot) return;
+                    // Make sure we have subscribers
+                    if(!subscribers[this.property]) return;
+                    // Loop instances and update
+                    isRoot = false;
+                    subscribers[this.property].forEach(e => {
+                        // Don't set the same instance
+                        if(e !== this) {
+                            e.set(change.path, change.value);
+                            // Needed for mutable changes
+                            e.notifyPath(change.path);
                         }
-                        isRoot = false;
-                    }
+                    });
+                    isRoot = true;
+                    // Update our store
+                    data[this.property] = change.base;
                 }
             }
 
