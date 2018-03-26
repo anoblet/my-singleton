@@ -6,11 +6,11 @@
 
     <title>my-singleton demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../bower_components/iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../bower_components/paper-input/paper-input.html">
     <link rel="import" href="../my-singleton.html">
 
     <custom-style>
@@ -23,12 +23,16 @@
     <h3>Basic my-singleton demo</h3>
     <demo-snippet>
         <template>
-            <my-singleton key="test" value="{{instance1}}"></my-singleton>
-            <my-singleton key="test" value="{{instance2}}"></my-singleton>
-                Instance 1
-                <paper-input value="{{instance1}}"></paper-input>
-                Instance 2
-                <paper-input value="{{instance2}}"></paper-input>
+            <dom-bind>
+                <template>
+                    <my-singleton key="test" value="{{instance1}}"></my-singleton>
+                    <my-singleton key="test" value="{{instance2}}"></my-singleton>
+                    Instance 1
+                    <paper-input value="{{instance1}}"></paper-input>
+                    Instance 2
+                    <paper-input value="{{instance2}}"></paper-input>
+                </template>
+            </dom-bind>
         </template>
     </demo-snippet>
 </div>
@@ -48,7 +52,8 @@
             <my-singleton id="object" property="object" value="{{object}}"></my-singleton>
             <my-singleton id="objectTest" property="object" value="{{objectTest}}"></my-singleton>
             <!--<app-localstorage-document key="object" data="{{object}}"></app-localstorage-document>-->
-        </div>z
+        </div>
+        z
     </template>
     <script>
         class TestComponent extends Polymer.Element {
